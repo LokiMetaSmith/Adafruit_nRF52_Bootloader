@@ -22,40 +22,45 @@
  * THE SOFTWARE.
  */
 
-#ifndef PCA10100_H
-#define PCA10100_H
+#ifndef _OP1_NRF52833_H
+#define _OP1_NRF52833_H
+
+#define _PINNUM(port, pin)    ((port)*32 + (pin))
 
 /*------------------------------------------------------------------*/
 /* LED
  *------------------------------------------------------------------*/
-#define LEDS_NUMBER         2
-#define LED_PRIMARY_PIN     13
-#define LED_SECONDARY_PIN   14
+#define LEDS_NUMBER           3  // red LED
+#define LED_PRIMARY_PIN       _PINNUM(0, 24)
+#define LED_SECONDARY_PIN       _PINNUM(0, 25)
+#define LED_TERTIARY_PIN       _PINNUM(0, 21)
 #define LED_STATE_ON        0
 
 /*------------------------------------------------------------------*/
 /* BUTTON
  *------------------------------------------------------------------*/
 #define BUTTONS_NUMBER      2
-#define BUTTON_1            11
-#define BUTTON_2            12
+#define BUTTON_1              _PINNUM(1, 11)  // D2 switch
+#define BUTTON_2              _PINNUM(1, 12)  // D3 switch
 #define BUTTON_PULL         NRF_GPIO_PIN_PULLUP
 
 //--------------------------------------------------------------------+
 // BLE OTA
 //--------------------------------------------------------------------+
-#define BLEDIS_MANUFACTURER    "Nordic"
-#define BLEDIS_MODEL           "PCA10100"
+#define BLEDIS_MANUFACTURER   "Maverick"
+#define BLEDIS_MODEL          "Opossum Pouch"
 
 //--------------------------------------------------------------------+
 // USB
 //--------------------------------------------------------------------+
-#define USB_DESC_VID           0x1915
-#define USB_DESC_UF2_PID       0x521F
-#define USB_DESC_CDC_ONLY_PID  0x521F
+#define USB_DESC_VID           0x239A
+#define USB_DESC_UF2_PID       0x0063
+#define USB_DESC_CDC_ONLY_PID  0x0064
 
-#define UF2_PRODUCT_NAME    "Nordic nRF52833 DK"
-#define UF2_BOARD_ID        "nRF52833-pca10100-v1"
-#define UF2_INDEX_URL       "https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52833-DK"
+//------------- UF2 -------------//
+#define UF2_PRODUCT_NAME   "Opossum Pouch"
+#define UF2_VOLUME_LABEL   "OPBOOT"
+#define UF2_BOARD_ID       "nRF52833-OP"
+#define UF2_INDEX_URL      "https://www..com/"
 
-#endif // PCA10100_H
+#endif // _OP1_NRF52833_H
