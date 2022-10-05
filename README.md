@@ -10,9 +10,11 @@ This is a CDC/DFU/UF2 bootloader for nRF52 boards.
 - [Adafruit Feather nRF52840 Express](https://www.adafruit.com/product/4062)
 - [Adafruit Feather nRF52840 Sense](https://www.adafruit.com/product/4516)
 - [Adafruit ItsyBitsy nRF52840 Express](https://www.adafruit.com/product/4481)
+- [Adafruit LED Glasses Driver nRF52840](https://www.adafruit.com/product/5217)
 - Adafruit Metro nRF52840 Express
 - [Akizukidenshi AE-BL652-BO](https://akizukidenshi.com/catalog/g/gK-15567/)
 - [Electronut Labs Papyr](https://docs.electronut.in/papyr/)
+- [iLabs Challenger 840 BLE](https://ilabs.se/challenger-840-ble-datasheet/)
 - [MakerDiary MDK nRF52840 USB Dongle](https://makerdiary.com/products/nrf52840-mdk-usb-dongle)
 - [MakerDiary nRF52840 M.2 Module](https://makerdiary.com/products/nrf52840-m2-module)
 - [Nordic nRF52840DK PCA10056](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-DK)
@@ -78,16 +80,24 @@ For other boards, please check the board definition for details.
 
 ### Making your own UF2
 
-To create your own UF2 DFU update image, simply use the [Python conversion script](https://github.com/Microsoft/uf2/blob/master/utils/uf2conv.py) on a .bin file or .hex file, specifying the family as **0xADA52840**. If using a .bin file with the conversion script you must specify application address with the -b switch, this address depend on the SoftDevice size/version e.g S140 v6 is 0x26000
+To create your own UF2 DFU update image, simply use the [Python conversion script](https://github.com/Microsoft/uf2/blob/master/utils/uf2conv.py) on a .bin file or .hex file, specifying the family as **0xADA52840** (nRF52840) or **0x621E937A** (nRF52833).
 
-To create a UF2 image from a .bin file:
 ```
-uf2conv.py firmware.bin -c -b 0x26000 -f 0xADA52840
-```
-
-To create a UF2 image from a .hex file:
-```
+nRF52840
 uf2conv.py firmware.hex -c -f 0xADA52840
+
+nRF52833
+uf2conv.py firmware.hex -c -f 0x621E937A
+```
+
+If using a .bin file with the conversion script you must specify application address with the -b switch, this address depend on the SoftDevice size/version e.g S140 v6 is 0x26000, v7 is 0x27000
+
+```
+nRF52840
+uf2conv.py firmware.bin -c -b 0x26000 -f 0xADA52840
+
+nRF52833
+uf2conv.py firmware.bin -c -b 0x27000 -f 0x621E937A
 ```
 
 To create a UF2 image for bootloader from a .hex file using separated family of **0xd663823c**
@@ -111,43 +121,16 @@ both bootloader and the Nordic SoftDevice, you can freely upgrade/downgrade to a
 You should only continue if you are looking to develop bootloader for your own.
 You must have have a J-Link available to "unbrick" your device.
 
-Prerequisites
+### Prerequisites
 
 - ARM GCC
-
-To install for macos
-
-```bash
-brew tap ArmMbed/homebrew-formulae
-brew install arm-none-eabi-gcc
-brew link --overwrite arm-none-eabi-gcc # if a prior version was present
-```
-
 - Nordic's [nRF5x Command Line Tools](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools)
 - [Python IntelHex](https://pypi.org/project/IntelHex/)
 
-To build:
+### Build:
 
 ```
 make BOARD=feather_nrf52840_express all
-```
-
-To flash the bootloader with JLink:
-
-```
-make BOARD=feather_nrf52840_express flash
-```
-
-To upgrade the bootloader using DFU Serial via port /dev/ttyACM0
-
-```
-make BOARD=feather_nrf52840_express SERIAL=/dev/ttyACM0 dfu-flash
-```
-
-To flash SoftDevice (and chip erase):
-
-```
-make BOARD=feather_nrf52840_express sd
 ```
 
 For the list of supported boards, run `make` without `BOARD=` :
@@ -159,9 +142,41 @@ Supported boards are: feather_nrf52840_express feather_nrf52840_express pca10056
 Makefile:90: *** BOARD not defined.  Stop
 ```
 
+### Flash
+
+To flash the bootloader (without softdevice/mbr) using JLink:
+
+```
+make BOARD=feather_nrf52840_express flash
+```
+
+If you are using pyocd as debugger, add `FLASHER=pyocd` to make command:
+
+```
+make BOARD=feather_nrf52840_express FLASHER=pyocd flash
+```
+
+To upgrade the bootloader using DFU Serial via port /dev/ttyACM0
+
+```
+make BOARD=feather_nrf52840_express SERIAL=/dev/ttyACM0 flash-dfu
+```
+
+To flash SoftDevice (will also erase chip):
+
+```
+make BOARD=feather_nrf52840_express flash-sd
+```
+
+To flash MBR only
+
+```
+make BOARD=feather_nrf52840_express flash-mbr
+```
+
 ### Common makefile problems
 
-#### 1. `arm-none-eabi-gcc`: No such file or directory
+#### `arm-none-eabi-gcc`: No such file or directory
 
 If you get the following error ...
 
@@ -180,7 +195,7 @@ $ make CROSS_COMPILE=/opt/gcc-arm-none-eabi-9-2019-q4-major/bin/arm-none-eabi- B
 
 For other compile errors, check the gcc version with `arm-none-eabi-gcc --version` to insure it is at least 9.x.
 
-#### 2. `ModuleNotFoundError: No module named 'intelhex'`
+#### `ModuleNotFoundError: No module named 'intelhex'`
 
 Install python-intelhex with
 
@@ -188,9 +203,7 @@ Install python-intelhex with
 pip install intelhex
 ```
 
-
-#### 3. `make: nrfjprog: No such file or directory`
+#### `make: nrfjprog: No such file or directory`
 
 Make sure that `nrfjprog` is available from the command-line. This binary is
 part of Nordic's nRF5x Command Line Tools.
-
