@@ -30,18 +30,18 @@
 /*------------------------------------------------------------------*/
 /* LED
  *------------------------------------------------------------------*/
-#define LEDS_NUMBER           3  // red LED
-#define LED_PRIMARY_PIN       _PINNUM(0, 24)
-#define LED_SECONDARY_PIN       _PINNUM(0, 25)
-#define LED_TERTIARY_PIN       _PINNUM(0, 21)
-#define LED_STATE_ON        0
+#define LEDS_NUMBER           3  // green LED
+#define LED_PRIMARY_PIN       _PINNUM(1, 5)
+#define LED_SECONDARY_PIN       _PINNUM(0, 10)
+#define LED_TERTIARY_PIN       _PINNUM(0, 9)
+#define LED_STATE_ON        1
 
 /*------------------------------------------------------------------*/
 /* BUTTON
  *------------------------------------------------------------------*/
 #define BUTTONS_NUMBER      2
-#define BUTTON_1              _PINNUM(1, 11)  // D2 switch
-#define BUTTON_2              _PINNUM(1, 12)  // D3 switch
+#define BUTTON_1              _PINNUM(0, 11)  // D2 switch
+#define BUTTON_2              _PINNUM(0, 8)  // D3 switch
 #define BUTTON_PULL         NRF_GPIO_PIN_PULLUP
 
 //--------------------------------------------------------------------+
