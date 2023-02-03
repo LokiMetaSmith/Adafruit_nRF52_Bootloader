@@ -63,4 +63,8 @@
 #define UF2_BOARD_ID       "nRF52833-OP"
 #define UF2_INDEX_URL      "https://www..com/"
 
+//-----------//
+#define ENABLE_DCDC_0 0
+#define ENABLE_DCDC_1 1
+#define BOARD_RGB_BRIGHTNESS 0x000000//0x101010
 #endif // _OP1_NRF52833_H
